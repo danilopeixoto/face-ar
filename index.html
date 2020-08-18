@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Face AR</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="view-canvas"></canvas>
+
+    <script src="js/face-ar.js"></script>
+    <script type="text/javascript">
+      const debugFilter = new FaceAR.filters.DebugFilter()
+      const stereoGlassesFilter = new FaceAR.filters.StereoGlassesFilter()
+
+      const session = new FaceAR.Session({
+        apiKey: 'O7qDkmWgIO2uNf0MhROcCJSBpQIyhzD7bZp6n36e',
+        canvasID: 'view-canvas',
+        maximumFaceCount: 1,
+        filters: [debugFilter, stereoGlassesFilter],
+        onInit: (options, scene, error) => {
+          if (error) {
+            console.error(error.message)
+          } else {
+            console.info(options)
+          }
+        },
+        onUpdate: (options, scene, anchors) => {
+          if (anchors.length > 0) {
+            debugFilter.update(anchors[0])
+            stereoGlassesFilter.update(anchors[0])
+          }
+        }
+      })
+
+      const canvas = document.getElementById('view-canvas')
+      const onResize = () =>
+        session.resize(window.innerWidth, window.innerHeight)
+
+      onResize()
+      window.addEventListener('resize', onResize)
+    </script>
+  </body>
+</html>
